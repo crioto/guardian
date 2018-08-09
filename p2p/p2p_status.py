@@ -1,4 +1,4 @@
-import common.test as t
+from guardlib import check as t
 
 def Executor(t):
     return t.ExecuteCommand("p2p status")
@@ -11,9 +11,9 @@ def ResultHandler(t, result):
         t.MarkAsFailed()
 
 
-def Test():
-    test = t.Test(0, "p2p", "status")
-    test.SetExecutor(Executor)
-    test.SetHandler(ResultHandler)
+def Check():
+    c = t.Check(0, "p2p", "status")
+    c.SetExecutor(Executor)
+    c.SetHandler(ResultHandler)
 
-    return test
+    return c

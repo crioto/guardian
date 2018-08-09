@@ -1,7 +1,7 @@
 # Example test that checks p2p daemon status
 
-import common.test as t
-import common.result as r
+from guardlib import check as t
+from guardlib import result as r
 
 # Executor is the main entry point for a test
 # This function 
@@ -26,11 +26,11 @@ def ResultHandler(t, result):
     # All extra fields will be added to payload field of resulting YAML
     return result
 
-# Test creates an instance of `Test` class, sets callbacks and returns it
+# Check creates an instance of `Check` class, sets callbacks and returns it
 # for later registration
-def Test():
-    test = t.Test(0, "p2p", "daemon")
-    test.SetExecutor(Executor)
-    test.SetHandler(ResultHandler)
+def Check():
+    c = t.Check(0, "p2p", "daemon")
+    c.SetExecutor(Executor)
+    c.SetHandler(ResultHandler)
 
-    return test
+    return c

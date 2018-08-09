@@ -1,4 +1,4 @@
-# Main class for tests
+# Main class for checks
 # Each performing test must create an instance of Test class
 # Test class provides several methods that can perform activities on user machine:
 # ExecuteCommand - executes a CLI command, gathers exit code, stdout and stderr
@@ -11,17 +11,18 @@
 import time
 import subprocess
 from enum import Enum
+import http.client
 
 # undefinedCallback is a dummy callback function
 def undefinedCallback(result):
     print("Undefined callback")
 
 # Possible statuses (states) of test
-TestStatus = Enum('TestStatus', 'succeed failed pending running')
+CheckStatus = Enum('CheckStatus', 'succeed failed pending running')
 
-TestList = {}
+CheckList = {}
 
-class Test:
+class Check:
     name = "Unnamed"
     component = ""
     createDate = 0
@@ -29,7 +30,7 @@ class Test:
     endDate = 0
     executorCallback = undefinedCallback
     handlerCallback = undefinedCallback
-    status = TestStatus.pending
+    status = CheckStatus.pending
 
 
     def __init__(self, config, component, name):
@@ -37,7 +38,7 @@ class Test:
         self.component = component
         self.createDate = time.time()
         self.config = config
-        self.status = TestStatus.pending
+        self.status = CheckStatus.pending
 
 
     # GetComponent returns component name
@@ -45,17 +46,17 @@ class Test:
         return self.component
 
 
-    # GetName returns test name
+    # GetName returns Check name
     def GetName(self):
         return self.name
 
 
-    # GetSTatus returns current status of the test
+    # GetSTatus returns current status of the Check
     def GetStatus(self):
         return self.status
     
 
-    # SetExecutor will set main test function callback
+    # SetExecutor will set main Check function callback
     def SetExecutor(self, cb):
         self.executorCallback = cb
 
@@ -65,14 +66,14 @@ class Test:
         self.handlerCallback = cb
 
 
-    # Start will initiate test execution and run executor callback function
+    # Start will initiate Check execution and run executor callback function
     def Start(self):
         self.startDate = time.time()
-        self.status = TestStatus.running
+        self.status = CheckStatus.running
         return self.executorCallback(self)
 
 
-    # Stop will finish test
+    # Stop will finish Check
     def Stop(self):
         self.endDate = time.time()
         return 0
@@ -86,22 +87,32 @@ class Test:
         return [p.returncode, out.decode('utf-8'), err.decode('utf-8')]
 
 
+    # ExecuteHTTPSRequestGET will execute GET request over HTTPS to the `host` and `uri`
+    # Returns a tuple of status code, reason, headers list and decoded response
+    def ExecuteHTTPSRequestGET(self, host, uri):
+        connection = http.client.HTTPSConnection(host)
+        connection.request("GET", uri)
+        response = connection.getresponse()
+        headers = response.getheaders()
+        return [response.status, response.reason, headers, response.read().decode()]
+
+
     # Result will run ResultHandler callback
     def Result(self, result):
         return self.handlerCallback(self, result)
 
     
     def MarkAsSucceed(self):
-        self.status = TestStatus.succeed
+        self.status = CheckStatus.succeed
 
 
     def MarkAsFailed(self):
-        self.status = TestStatus.failed
+        self.status = CheckStatus.failed
 
     
 
-# RegisterTest will add test described as `name` to the queue
-# executor is a main test entry point
+# RegisterCheck will add Check described as `name` to the queue
+# executor is a main Check entry point
 # resultHandler will parse result of executor
-def RegisterTest(newTest, name):
-    TestList[name] = newTest()
+def RegisterCheck(newCheck, name):
+    CheckList[name] = newCheck()

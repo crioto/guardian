@@ -1,6 +1,8 @@
-import p2p
-import common.test as t
 import sys
+from p2p import p2p
+from system import system
+from peeros import peeros
+from guardlib import check as t
 
 
 # ParseCommand will try to parse arguments provided to an app
@@ -44,7 +46,7 @@ def List(args):
 def ListComponents():
     components = []
     print("Available components:")
-    for n, test in t.TestList.items():
+    for n, test in t.CheckList.items():
         exists = False
         for c in components:
             if c == test.GetComponent():
@@ -60,7 +62,7 @@ def ListComponents():
 # LIstComponentTests will output list of tests within provided component to stdout
 def ListComponentTests(component):
     print("Available tests in " + component + ":")
-    for n, test in t.TestList.items():
+    for n, test in t.CheckList.items():
         if test.GetComponent() == component:
             print("\t" + test.GetName())
 
@@ -69,7 +71,7 @@ def ListComponentTests(component):
 
 # EchoTest will send an informing line to stdout without EOL
 def EchoTest(name):
-    print("Running " + name + "\t", end="", flush=True)
+    print(name + "\t", end="", flush=True)
 
 
 # Run function will start test execution
@@ -94,16 +96,16 @@ def Run(args):
         else:
             componentName = args[0]
 
-    for name, test in t.TestList.items():
+    for name, test in t.CheckList.items():
         if componentName != "" and test.GetComponent() != componentName:
             continue
         if testName != "" and test.GetName() != testName:
             continue
         EchoTest(name)
         test.Result(test.Start())
-        if test.GetStatus() == t.TestStatus.succeed:
+        if test.GetStatus() == t.CheckStatus.succeed:
             print("[OK]")
-        elif test.GetStatus() == t.TestStatus.failed:
+        elif test.GetStatus() == t.CheckStatus.failed:
             print("[Failed]")
         else:
             print("[Error]")
