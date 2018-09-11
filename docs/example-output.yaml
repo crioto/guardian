@@ -1,0 +1,17 @@
+component: os
+name: diskspace
+status_code: 1
+timestamp: 2018-09-03T14:56:03Z
+info: 
+  - key: /dev/sda1
+    value: 15G
+    extra:
+      - key: nested_key
+      - value: nested_value
+  - key: /dev/sda2
+    value: 100G
+error:
+  - key: /dev/sdb1
+    value: Failed to access: Permission denied
+  - key: /dev/sdb1
+    value: Failed to access: dbus error

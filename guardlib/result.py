@@ -16,7 +16,7 @@ class Result:
 
 
     # append will add additional property to the report
-    def append(self, name, value):
+    def append(self, name, value, info):
         self.fields.update({name: value})
 
 
@@ -34,4 +34,5 @@ class Result:
             data["payload"] = payload
 
         res = yaml.dump(data)
+        print(res)
         return res

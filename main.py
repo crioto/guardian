@@ -102,7 +102,8 @@ def Run(args):
         if testName != "" and test.GetName() != testName:
             continue
         EchoTest(name)
-        test.Result(test.Start())
+        ret = test.Result(test.Start())
+        
         if test.GetStatus() == t.CheckStatus.succeed:
             print("[OK]")
         elif test.GetStatus() == t.CheckStatus.failed:
